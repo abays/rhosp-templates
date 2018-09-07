@@ -18,20 +18,17 @@ test "$(whoami)" != 'stack' && (echo "This must be run by the stack user on the 
 
 function deployRHOSP {
 time openstack overcloud deploy --templates \
-  -r ~/templates/roles_data_with_generic.yaml \
-  -e ~/templates/network-environment.yaml \
-  -e ~/templates/storage-environment.yaml \
-  -e ~/templates/ips-from-pool-all.yaml \
-  -e ~/templates/vco2.yaml \
-  -e /usr/share/openstack-tripleo-heat-templates/environments/neutron-opendaylight-l3.yaml \
+  -r ~/ons-demo/templates/roles_data_with_generic.yaml \
+  -e ~/ons-demo/templates/node-info.yaml \
+  -e ~/ons-demo/templates/network-environment.yaml \
+  -e ~/ons-demo/templates/storage-environment.yaml \
+  -e ~/ons-demo/templates/ips-from-pool-all.yaml \
+  -e ~/ons-demo/templates/vco2.yaml \
+  -e ~/ons-demo/templates/overcloud_images.yaml \
+  -e ~/ons-demo/templates/environments/inject-trust-anchor-hiera.yaml \
+  -e /usr/share/openstack-tripleo-heat-templates/environments/neutron-opendaylight.yaml \
   --libvirt-type kvm \
   --timeout 120 \
-  --control-scale 3 \
-  --compute-scale 6 \
-  --ceph-storage-scale 3 \
-  --compute-flavor baremetal \
-  --control-flavor baremetal \
-  --ceph-storage-flavor baremetal \
   --stack vco2 \
   --ntp-server pool.ntp.org \
   --log-file overcloud_deployment.log
@@ -39,12 +36,12 @@ time openstack overcloud deploy --templates \
 
 function updateRHOSP {
 time yes "" | openstack overcloud update stack vco2 -i --templates \
-  -r ~/templates/roles_data_with_generic.yaml \
-  -e ~/templates/network-environment.yaml \
-  -e ~/templates/storage-environment.yaml \
-  -e ~/templates/ips-from-pool-all.yaml \
-  -e ~/templates/vco2.yaml \
-  -e /usr/share/openstack-tripleo-heat-templates/environments/neutron-opendaylight-l3.yaml
+  -r ~/ons-demo/templates/roles_data_with_generic.yaml \
+  -e ~/ons-demo/templates/network-environment.yaml \
+  -e ~/ons-demo/templates/storage-environment.yaml \
+  -e ~/ons-demo/templates/ips-from-pool-all.yaml \
+  -e ~/ons-demo/templates/vco2.yaml \
+  -e /usr/share/openstack-tripleo-heat-templates/environments/neutron-opendaylight.yaml
 }
 
 if [ $1 = "deploy" ]; then

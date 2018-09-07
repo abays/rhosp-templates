@@ -91,89 +91,79 @@ parameters:
 
 resources:
   OsNetConfigImpl:
-    type: OS::Heat::StructuredConfig
+    type: OS::Heat::SoftwareConfig
     properties:
-      group: os-apply-config
+      group: script
       config:
-        os_net_config:
-          network_config:
-            -
-              type: interface
-              name: nic1
-              use_dhcp: false
-              addresses:
-                -
-                  ip_netmask:
-                    list_join:
-                      - '/'
-                      - - {get_param: ControlPlaneIp}
-                        - {get_param: ControlPlaneSubnetCidr}
-              routes:
-                -
-                  ip_netmask: 169.254.169.254/32
-                  next_hop: {get_param: EC2MetadataIp}
-            -
-              type: vlan
-              device: nic1
-              use_dhcp: false
-              vlan_id: {get_param: InternalApiNetworkVlanID}
-              addresses:
-                -
-                  ip_netmask: {get_param: InternalApiIpSubnet}
-            -
-              type: vlan
-              device: nic1
-              use_dhcp: false
-              vlan_id: {get_param: StorageNetworkVlanID}
-              addresses:
-                -
-                  ip_netmask: {get_param: StorageIpSubnet}
-            -
-              type: ovs_bridge
-              name: {get_input: bridge_name}
-              dns_servers: {get_param: DnsServers}
-              members:
-                -
-                  type: interface
-                  name: nic2
-                  primary: true
-                -
-                  type: vlan
-                  vlan_id: {get_param: ExternalNetworkVlanID}
+        str_replace:
+          template:
+            get_file: /usr/share/openstack-tripleo-heat-templates/network/scripts/run-os-net-config.sh
+          params:
+            $network_config:
+              network_config:
+                - type: interface
+                  name: nic1
+                  use_dhcp: false
                   addresses:
-                    -
-                      ip_netmask: {get_param: ExternalIpSubnet}
+                    - ip_netmask:
+                        list_join:
+                          - '/'
+                          - - {get_param: ControlPlaneIp}
+                            - {get_param: ControlPlaneSubnetCidr}
                   routes:
-                    -
-                      default: true
-                      next_hop: {get_param: ExternalInterfaceDefaultRoute}
-                -
-                  type: vlan
-                  vlan_id: {get_param: TenantNetworkVlanID}
+                    - ip_netmask: 169.254.169.254/32
+                      next_hop: {get_param: EC2MetadataIp}
+                - type: vlan
+                  device: nic1
+                  use_dhcp: false
+                  vlan_id: {get_param: InternalApiNetworkVlanID}
                   addresses:
-                    -
-                      ip_netmask: {get_param: TenantIpSubnet}
-                # Uncomment when including environments/network-management.yaml
-                # If setting default route on the Management interface, comment
-                # out the default route on the Control Plane.
-                #-
-                #  type: vlan
-                #  device: bond1
-                #  vlan_id: {get_param: ManagementNetworkVlanID}
-                #  addresses:
-                #    -
-                #      ip_netmask: {get_param: ManagementIpSubnet}
-                #  routes:
-                #    -
-                #      default: true
-                #      next_hop: {get_param: ManagementInterfaceDefaultRoute}
-            -
-              type: interface
-              name: nic3
-              use_dhcp: false
-              defroute: false
+                    - ip_netmask: {get_param: InternalApiIpSubnet}
+                - type: vlan
+                  device: nic1
+                  use_dhcp: false
+                  vlan_id: {get_param: StorageNetworkVlanID}
+                  addresses:
+                    - ip_netmask: {get_param: StorageIpSubnet}
+                - type: ovs_bridge
+                  name: {get_input: bridge_name}
+                  dns_servers: {get_param: DnsServers}
+                  members:
+                    - type: interface
+                      name: nic2
+                      primary: true
+                    - type: vlan
+                      vlan_id: {get_param: ExternalNetworkVlanID}
+                      addresses:
+                        - ip_netmask: {get_param: ExternalIpSubnet}
+                      routes:
+                        - default: true
+                          next_hop: {get_param: ExternalInterfaceDefaultRoute}
+                    - type: vlan
+                      vlan_id: {get_param: TenantNetworkVlanID}
+                      addresses:
+                        - ip_netmask: {get_param: TenantIpSubnet}
+                    # Uncomment when including environments/network-management.yaml
+                    # If setting default route on the Management interface, comment
+                    # out the default route on the Control Plane.
+                    #-
+                    #  type: vlan
+                    #  device: bond1
+                    #  vlan_id: {get_param: ManagementNetworkVlanID}
+                    #  addresses:
+                    #    -
+                    #      ip_netmask: {get_param: ManagementIpSubnet}
+                    #  routes:
+                    #    -
+                    #      default: true
+                    #      next_hop: {get_param: ManagementInterfaceDefaultRoute}
+                - type: interface
+                  name: nic3
+                  use_dhcp: false
+                  defroute: false
 
 outputs:
   OS::stack_id:
     description: The OsNetConfigImpl resource.
-    value: {get_resource: OsNetConfigImpl}
+    value:
+      get_resource: OsNetConfigImpl

@@ -66,17 +66,33 @@ parameter_defaults:
   ## Ceph client key, e.g 'AQC+vYNXgDAgAhAAc8UoYt+OTz5uhV7ItLdwUw=='
   # CephClientKey: ''
 
-  ExtraConfig:
-    ceph::profile::params::osd_pool_default_min_size: 3
-    ceph::profile::params::osd_journal_size: 5120
-    ceph::profile::params::osd_pool_default_pg_num:  32
-    ceph::profile::params::osd_pool_default_pgp_num: 32
-    ceph::profile::params::osd_pool_default_size: 3
-    ceph::profile::params::osds:
-      '/dev/sdb': {}
-      '/dev/sdc': {}
-      '/dev/sdd': {}
-#      '/dev/sdb':
+  CephAnsibleDisksConfig:
+    osd_scenario: collocated
+    devices:
+      - /dev/sdb
+      - /dev/sdc
+      - /dev/sdd
+
+  CephPoolDefaultPgNum: 32       # not sure if this parameter or override below does the trick
+
+  CephConfigOverrides:
+    osd_pool_default_min_size: 3
+    osd_journal_size: 5120
+    osd_pool_default_pg_num: 32
+    osd_pool_default_pgp_num: 32
+    osd_pool_default_size: 3
+
+#   ExtraConfig:
+#     ceph::profile::params::osd_pool_default_min_size: 3
+#     ceph::profile::params::osd_journal_size: 5120
+#     ceph::profile::params::osd_pool_default_pg_num:  32
+#     ceph::profile::params::osd_pool_default_pgp_num: 32
+#     ceph::profile::params::osd_pool_default_size: 3
+#     ceph::profile::params::osds:
+#       '/dev/sdb': {}
+#       '/dev/sdc': {}
+#       '/dev/sdd': {}
+# #      '/dev/sdb':
 #        journal: '/dev/sdf'
 #      '/dev/sdc':
 #        journal: '/dev/sdf'

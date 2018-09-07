@@ -3,16 +3,16 @@
 # script.
 #
 #
-# NOTE: Most customization happens in this file for a RH-OSP deployment, 
+# NOTE: Most customization happens in this file for a RH-OSP deployment,
 #       see parameter_defaults below and override to suit you own environment.
-# 
+#
 # Contributors:
 # Dave Cain, Original Author
-# 
+#
 #
 
 resource_registry:
-  OS::TripleO::NodeUserData: /home/stack/templates/ceph-wipe.yaml
+  OS::TripleO::NodeUserData: /home/stack/ons-demo/templates/ceph-wipe.yaml
 
 
 parameter_defaults:
